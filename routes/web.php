@@ -85,6 +85,10 @@ Route::middleware(['auth', 'role.peminjam'])->prefix('peminjam')->name('peminjam
     Route::get('/katalog', [PeminjamController::class, 'katalogAlat'])->name('katalog');
     Route::post('/peminjaman/ajukan', [PeminjamController::class, 'ajukanPeminjaman'])->name('peminjaman.ajukan');
     Route::get('/peminjaman/riwayat', [PeminjamController::class, 'riwayatPeminjaman'])->name('riwayat');
+
+    // BARU: ajukan pengembalian dari halaman riwayat
+    Route::post('/peminjaman/{peminjaman}/ajukan-pengembalian', [PeminjamController::class, 'ajukanPengembalian'])
+        ->name('riwayat.ajukanPengembalian');
 });
 
 // Route Tamu (Belum Login)

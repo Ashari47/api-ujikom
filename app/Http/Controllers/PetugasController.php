@@ -180,7 +180,7 @@ class PetugasController extends Controller
 
             // Mengubah status peminjaman
             $peminjaman->update([
-                'status' => 'selesai'
+                'status' => 'dikembalikan'
             ]);
 
 

@@ -19,8 +19,33 @@ class AdminController extends Controller
     // Menampilkan Dashboard Admin & Log Aktivitas
     public function index()
     {
+        // FIXED: sebelumnya $totalAlat tidak dikirim ke view, padahal
+        // dashboard.blade.php baris 26 memakainya -> Undefined variable $totalAlat
+        $totalAlat = Alat::count();
+
+        // FIXED: dashboard.blade.php baris 36 memakai $peminjamanAktif tapi belum
+        // dikirim -> Undefined variable $peminjamanAktif.
+        // ASUMSI: "aktif" = status 'dipinjam' (barang masih di tangan peminjam,
+        // belum dikembalikan). Kalau blade-nya loop jadi tabel (bukan angka),
+        // ganti ->count() jadi ->get() (dan tambahkan with('user','detailPinjam.alat')
+        // kalau butuh relasinya).
+        $peminjamanAktif = Peminjaman::where('status', 'dipinjam')->count();
+
+        // FIXED: dashboard.blade.php baris 46 memakai $pengembalianBulanIni tapi
+        // belum dikirim -> Undefined variable $pengembalianBulanIni.
+        // ASUMSI: jumlah pengembalian yang tgl_kembali-nya jatuh di bulan berjalan.
+        $pengembalianBulanIni = Pengembalian::whereMonth('tgl_kembali', Carbon::now()->month)
+            ->whereYear('tgl_kembali', Carbon::now()->year)
+            ->count();
+
+        // FIXED: dashboard.blade.php memakai $totalUser (kartu "Total User") tapi
+        // belum dikirim -> Undefined variable $totalUser. Ini variabel terakhir
+        // yang dipakai di dashboard.blade.php, setelah ini semua kartu terisi.
+        $totalUser = User::count();
+
         $logs = LogAktivitas::with('user')->latest()->take(10)->get();
-        return view('admin.dashboard', compact('logs'));
+
+        return view('admin.dashboard', compact('totalAlat', 'peminjamanAktif', 'pengembalianBulanIni', 'totalUser', 'logs'));
     }
 
     // CRUD Alat: Menampilkan daftar alat
@@ -334,7 +359,9 @@ class AdminController extends Controller
             'tgl_pinjam' => 'required|date',
             'tgl_kembali_plan' => 'required|date|after_or_equal:tgl_pinjam',
             'alat_id' => 'required|array',
-            'alat_id.*' => 'exists:alats,id',
+            // FIXED: tabelnya bernama `alat`, bukan `alats` -> sebelumnya
+            // menyebabkan QueryException "Base table or view not found: alats"
+            'alat_id.*' => 'exists:alat,id',
             'jumlah' => 'required|array',
             'jumlah.*' => 'integer|min:1',
         ]);
