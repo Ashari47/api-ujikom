@@ -123,6 +123,12 @@ class PetugasController extends Controller
     {
         $search = $request->input('search');
 
+        // Auto-update status jadi "telat" kalau tanggal rencana kembali
+        // sudah lewat dari HARI INI (perbandingan per-tanggal, bukan per-jam)
+        Peminjaman::where('status', 'dipinjam')
+            ->whereDate('tgl_kembali_plan', '<', now()->toDateString())
+            ->update(['status' => 'telat']);
+
         $peminjamans = Peminjaman::with([
             'user',
             'detailPinjam.alat',
@@ -155,9 +161,14 @@ class PetugasController extends Controller
         Request $request,
         $peminjamanId
     ) {
-        $request->validate([
-            'kondisi_kembali' => 'required|string',
-            'denda' => 'nullable|integer',
+        // Error bag per peminjaman, supaya pesan error hanya muncul di kartu yang bersangkutan
+        $request->validateWithBag('pengembalian' . $peminjamanId, [
+            'kondisi_kembali' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
+            'denda'           => 'nullable|integer',
+        ], [
+            'kondisi_kembali.required' => 'Kondisi harus dipilih.',
+            'kondisi_kembali.in'       => 'Kondisi tidak valid.',
+            'denda.integer'            => 'Denda harus berupa angka bulat.',
         ]);
 
         DB::beginTransaction();

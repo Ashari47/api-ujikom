@@ -50,7 +50,7 @@
                     </td>
 
                     <td class="py-4 px-4 text-center">
-                        <a href="{{ route('admin.pengembalian.create', $peminjaman->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                        <a href="{{ route('admin.pengembalian.proses', $peminjaman->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
                             Proses Kembali
                         </a>
                     </td>

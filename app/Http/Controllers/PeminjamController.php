@@ -37,13 +37,22 @@ class PeminjamController extends Controller
     // Memproses pengajuan peminjaman (bisa banyak alat sekaligus)
     public function ajukanPeminjaman(Request $request)
     {
+        // Kalau form mengirim tgl_pinjam, pakai itu. Kalau tidak, tanggal pinjam = hari ini.
+        $adaInputTglPinjam = $request->filled('tgl_pinjam');
+        $request->merge([
+            'tgl_pinjam' => $request->input('tgl_pinjam') ?: now()->toDateString(),
+        ]);
+
         $request->validate([
-            'tgl_kembali_plan' => 'required|date|after_or_equal:today',
+            'tgl_pinjam' => 'required|date|after_or_equal:today',
+            'tgl_kembali_plan' => 'required|date|after_or_equal:tgl_pinjam',
             'alat_id' => 'required|array|min:1',
             'alat_id.*' => 'exists:alat,id',
             'jumlah' => 'required|array',
             'jumlah.*' => 'integer|min:1',
         ], [
+            'tgl_pinjam.after_or_equal' => 'Tanggal pinjam tidak boleh lebih awal dari hari ini.',
+            'tgl_kembali_plan.after_or_equal' => 'Rencana kembali tidak boleh lebih awal dari tanggal pinjam.',
             'alat_id.required' => 'Pilih minimal satu alat untuk diajukan.',
         ]);
 
@@ -51,7 +60,7 @@ class PeminjamController extends Controller
         try {
             $peminjaman = Peminjaman::create([
                 'user_id' => Auth::id(),
-                'tgl_pinjam' => now(),
+                'tgl_pinjam' => $adaInputTglPinjam ? $request->tgl_pinjam : now(),
                 'tgl_kembali_plan' => $request->tgl_kembali_plan,
                 'status' => 'diajukan',
             ]);
@@ -103,4 +112,4 @@ class PeminjamController extends Controller
 
         return redirect()->back()->with('success', 'Pengembalian diajukan, menunggu verifikasi petugas.');
     }
-}
+}   

@@ -38,4 +38,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(LogAktivitas::class);
     }
+
+    /**
+     * Cek apakah user masih punya peminjaman yang belum selesai.
+     * Selesai = dikembalikan, telat (sudah dikembalikan terlambat), atau ditolak.
+     */
+    public function punyaPeminjamanAktif(): bool
+    {
+        return $this->peminjaman()
+            ->whereNotIn('status', ['dikembalikan', 'telat', 'ditolak'])
+            ->exists();
+    }
 }
