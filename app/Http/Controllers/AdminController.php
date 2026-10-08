@@ -36,7 +36,7 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('totalAlat', 'peminjamanAktif', 'pengembalianBulanIni', 'totalUser', 'logs'));
     }
 
-    // CRUD Alat: Menampilkan daftar alat
+    ///''''/////// CRUD Alat: Menampilkan daftar alat
     public function indexAlat(Request $request)
     {
         $search = $request->input('search');
