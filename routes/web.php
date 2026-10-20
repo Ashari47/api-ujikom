@@ -95,6 +95,7 @@ Route::middleware(['auth', 'role.peminjam'])->prefix('peminjam')->name('peminjam
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
+    
 });
 
 // Route Logout (Harus sudah login)

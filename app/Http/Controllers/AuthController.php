@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Models\App;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\User;
 
 class AuthController extends Controller
 {
@@ -14,7 +17,7 @@ class AuthController extends Controller
     }
 
     // Memproses Login
-    public function login(Request $request)
+    public function login(Request $request) 
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -53,4 +56,7 @@ class AuthController extends Controller
 
         return redirect()->route('login');
     }
+
+   
+
 }

@@ -279,7 +279,7 @@
                 <span>Peminjam</span>
             </div>
 
-            <p class="foot">Dengan masuk, Anda menyetujui <a href="#">Ketentuan Layanan</a> dan <a href="#">Kebijakan Privasi</a> sistem ini.</p>
+            <p class="foot">Belum punya akun? <a href="#">Ketentuan Layanan</a> dan <a href="#">Kebijakan Privasi</a> sistem ini.</p>
         </div>
     </div>
 
